@@ -24,7 +24,7 @@
   "dependencies": {
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.1",
-    "@nestjs/core": "^12.0.1",
+    "@nestjs/core": "^12.0.1",ix
     "@nestjs/jwt": "^12.0.2",
     "@nestjs/mongoose": "^12.0.0",
     "@nestjs/observe": "^0.1.8",
@@ -53,6 +53,7 @@
     "supertest": "^7.0.0",
     "typescript": "^6.0.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.2",
+    "wrangler": "^4.151.0"
   }
 }
