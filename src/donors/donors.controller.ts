@@ -4,7 +4,6 @@ import {
   Get,
   Param,
   Patch,
-  Post,
   Query,
   Req,
   UseGuards,
@@ -15,7 +14,6 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiQuery,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -24,7 +22,6 @@ import { DonorsService } from './donors.service.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 import { AvailabilityDto } from './dto/availability.dto.js';
-import { CreateDonorDto } from './dto/create-donor.dto.js';
 import { UpdateDonorDto } from './dto/update-donor.dto.js';
 
 import { BloodGroup } from './schemas/donor.schema.js';
@@ -35,30 +32,6 @@ export class DonorsController {
   constructor(
     private readonly donorsService: DonorsService,
   ) {}
-
-  // ============================================================
-  // CREATE DONOR
-  // ============================================================
-
-  @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
-  @ApiOperation({
-    summary: 'Create donor profile',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Donor profile created successfully',
-  })
-  create(
-    @Req() req: any,
-    @Body() dto: CreateDonorDto,
-  ) {
-    return this.donorsService.create(
-      req.user.sub,
-      dto,
-    );
-  }
 
   // ============================================================
   // SEARCH DONORS

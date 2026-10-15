@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -10,6 +11,8 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger';
 
+import { BloodGroup } from '../../donors/schemas/donor.schema.js';
+
 export class CreateRequestDto {
   @ApiProperty({
     example: '68b123456789abcdef123456',
@@ -20,12 +23,12 @@ export class CreateRequestDto {
   donorId: string;
 
   @ApiProperty({
-    example: 'O+',
+    enum: BloodGroup,
+    example: BloodGroup.O_POSITIVE,
     description: 'Required blood group',
   })
-  @IsString()
-  @IsNotEmpty()
-  bloodGroup: string;
+  @IsEnum(BloodGroup)
+  bloodGroup: BloodGroup;
 
   @ApiProperty({
     example: 'Jaipur',

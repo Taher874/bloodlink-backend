@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { BloodGroup } from '../../donors/schemas/donor.schema.js';
 
 export enum RequestStatus {
   PENDING = 'pending',
@@ -27,9 +28,11 @@ export class BloodRequest {
   donorId: Types.ObjectId;
 
   @Prop({
+    type: String,
     required: true,
+    enum: Object.values(BloodGroup),
   })
-  bloodGroup: string;
+  bloodGroup: BloodGroup;
 
   @Prop({
     required: true,

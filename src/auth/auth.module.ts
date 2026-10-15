@@ -5,11 +5,13 @@ import { AuthController } from './auth.controller.js';
 import { AuthService } from './auth.service.js';
 
 import { UsersModule } from '../users/users.module.js';
+import { DonorsModule } from '../donors/donors.module.js';
 
 @Global()
 @Module({
   imports: [
     UsersModule,
+    DonorsModule,
 
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'bloodlink-secret-key',

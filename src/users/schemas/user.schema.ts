@@ -29,11 +29,17 @@ export class User {
   password: string;
 
   @Prop({
+    type: String,
     required: true,
-    enum: UserRole,
+    enum: Object.values(UserRole),
     default: UserRole.SEEKER,
   })
   role: UserRole;
+
+  @Prop({
+    default: false,
+  })
+  isDonor: boolean;
 
   @Prop({
     default: true,

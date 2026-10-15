@@ -9,6 +9,8 @@ import * as bcrypt from 'bcrypt';
 
 import { UsersService } from '../users/users.service.js';
 import { UserRole } from '../users/enums/role.enum.js';
+import { DonorsService } from '../donors/donors.service.js';
+import { BLOOD_GROUP_BY_CODE } from '../donors/schemas/donor.schema.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 
@@ -16,6 +18,7 @@ import { LoginDto } from './dto/login.dto.js';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
+    private readonly donorsService: DonorsService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -32,9 +35,21 @@ export class AuthService {
       name: dto.name,
       email: dto.email,
       password: hashedPassword,
-      role: dto.role,
+      role: dto.isDonor ? UserRole.DONOR : UserRole.SEEKER,
+      isDonor: dto.isDonor,
       isActive: true,
     });
+
+    const donorProfile = dto.isDonor
+      ? await this.donorsService.create(user._id.toString(), {
+          bloodGroup: dto.bloodGroup
+            ? BLOOD_GROUP_BY_CODE[dto.bloodGroup]
+            : undefined,
+          city: dto.city,
+          phone: dto.phone,
+          address: dto.address,
+        })
+      : undefined;
 
     return {
       message: 'Registration successful',
@@ -43,7 +58,9 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        isDonor: user.isDonor,
       },
+      ...(donorProfile ? { donorProfile } : {}),
     };
   }
 
@@ -58,10 +75,7 @@ export class AuthService {
       throw new UnauthorizedException('Account is disabled');
     }
 
-    const passwordMatch = await bcrypt.compare(
-      dto.password,
-      user.password,
-    );
+    const passwordMatch = await bcrypt.compare(dto.password, user.password);
 
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid email or password');
@@ -71,6 +85,7 @@ export class AuthService {
       sub: user._id.toString(),
       email: user.email,
       role: user.role,
+      isDonor: user.isDonor,
     };
 
     const accessToken = await this.jwtService.signAsync(payload);
@@ -82,6 +97,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        isDonor: user.isDonor,
       },
     };
   }

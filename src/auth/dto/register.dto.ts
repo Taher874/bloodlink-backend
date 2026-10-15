@@ -1,14 +1,17 @@
 import {
+  IsBoolean,
   IsEmail,
-  IsEnum,
+  IsIn,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { UserRole } from '../../users/enums/role.enum.js';
+import { BloodGroupCode } from '../../donors/schemas/donor.schema.js';
 
 export class RegisterDto {
   @ApiProperty({
@@ -36,10 +39,43 @@ export class RegisterDto {
   password: string;
 
   @ApiProperty({
-    enum: UserRole,
-    example: UserRole.SEEKER,
-    description: 'User role',
+    example: true,
+    description: 'Whether the user wants to donate blood',
   })
-  @IsEnum(UserRole)
-  role: UserRole;
+  @IsBoolean()
+  isDonor: boolean;
+
+  @ApiProperty({
+    enum: BloodGroupCode,
+    example: BloodGroupCode.O_POSITIVE,
+    description: 'Required when isDonor is true',
+  })
+  @ValidateIf((dto: RegisterDto) => dto.isDonor)
+  @IsIn(Object.values(BloodGroupCode))
+  bloodGroup?: BloodGroupCode;
+
+  @ApiProperty({
+    example: 'Jaipur',
+    description: 'Required when isDonor is true',
+  })
+  @ValidateIf((dto: RegisterDto) => dto.isDonor)
+  @IsString()
+  @IsNotEmpty()
+  city?: string;
+
+  @ApiPropertyOptional({
+    example: '9876543210',
+    description: 'Donor phone number',
+  })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @ApiPropertyOptional({
+    example: 'Malviya Nagar, Jaipur',
+    description: 'Donor address',
+  })
+  @IsOptional()
+  @IsString()
+  address?: string;
 }
